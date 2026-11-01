@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clipora</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="stage">
+    <section id="panel" class="glass" aria-label="剪贴板历史">
+      <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+
+      <header id="top">
+        <div class="search">
+          <svg viewBox="0 0 24 24" class="ico"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="q" type="text" placeholder="搜索剪贴板…" autocomplete="off" spellcheck="false" />
+          <kbd id="q-hint">Alt V</kbd>
+        </div>
+        <button id="btn-pause" class="icon-btn" title="暂停记录">
+          <svg viewBox="0 0 24 24" class="ico bars"><rect x="7" y="5" width="3.5" height="14" rx="1"/><rect x="13.5" y="5" width="3.5" height="14" rx="1"/></svg>
+          <svg viewBox="0 0 24 24" class="ico play"><path d="M8 5.5v13l10-6.5Z"/></svg>
+        </button>
+        <button id="btn-settings" class="icon-btn" title="设置">
+          <svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
+        </button>
+        <button id="btn-close" class="icon-btn" title="隐藏 (Esc)">
+          <svg viewBox="0 0 24 24" class="ico"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+
+      <nav id="tabs" role="tablist">
+        <span class="tab-ink" aria-hidden="true"></span>
+        <button class="tab active" data-f="all">全部</button>
+        <button class="tab" data-f="text">文本</button>
+        <button class="tab" data-f="link">链接</button>
+        <button class="tab" data-f="code">代码</button>
+        <button class="tab" data-f="image">图片</button>
+        <button class="tab" data-f="pinned">固定</button>
+      </nav>
+
+      <div id="paused-bar" hidden>
+        <span class="pulse-dot"></span>记录已暂停，新的复制不会被保存
+        <button id="btn-resume">恢复</button>
+      </div>
+
+      <main id="list-wrap">
+        <div id="list" role="listbox">
+          <div id="hl" aria-hidden="true"></div>
+        </div>
+        <div id="empty" hidden>
+          <div class="empty-art"><span></span><span></span><span></span></div>
+          <p class="empty-title">还没有记录</p>
+          <p class="empty-sub">复制任何内容，它就会出现在这里</p>
+        </div>
+      </main>
+
+      <footer id="foot">
+        <span><kbd>⏎</kbd>粘贴</span>
+        <span><kbd>⇧⏎</kbd>纯文本</span>
+        <span><kbd>→</kbd>预览</span>
+        <span><kbd>Ctrl 1-9</kbd>快速粘贴</span>
+        <span class="grow"></span>
+        <span id="count"></span>
+      </footer>
+
+      <!-- 设置页：覆盖在面板上 -->
+      <section id="settings" hidden>
+        <header class="set-head">
+          <button id="set-back" class="icon-btn" title="返回">
+            <svg viewBox="0 0 24 24" class="ico"><path d="m15 6-6 6 6 6"/></svg>
+          </button>
+          <h2>设置</h2>
+        </header>
+        <div class="set-body">
+          <div class="set-group">
+            <label class="row">
+              <span><b>保留条数</b><small>超出后自动删除最旧的未固定条目</small></span>
+              <span class="range"><input id="s-max" type="range" min="20" max="500" step="10" /><output id="s-max-v"></output></span>
+            </label>
+            <div class="row">
+              <span><b>呼出快捷键</b><small>点击后按下新的组合键</small></span>
+              <button id="s-hotkey" class="hotkey-btn"></button>
+            </div>
+          </div>
+          <div class="set-group">
+            <div class="row">
+              <span><b>主题</b></span>
+              <span class="seg" id="s-theme">
+                <button data-v="system">跟随系统</button><button data-v="light">浅色</button><button data-v="dark">深色</button>
+              </span>
+            </div>
+            <div class="row">
+              <span><b>强调色</b></span>
+              <span class="swatches" id="s-accent"></span>
+            </div>
+            <label class="row">
+              <span><b>减少动画</b></span>
+              <input id="s-motion" type="checkbox" class="switch" />
+            </label>
+          </div>
+          <div class="set-group">
+            <label class="row">
+              <span><b>开机自动启动</b><small>写入当前用户的启动项</small></span>
+              <input id="s-auto" type="checkbox" class="switch" />
+            </label>
+            <div class="row">
+              <span><b>数据位置</b><small id="s-dir"></small></span>
+              <button id="s-open" class="ghost-btn">打开</button>
+            </div>
+          </div>
+          <div class="set-group">
+            <div class="row">
+              <span><b>清空历史</b><small>已固定的条目会保留</small></span>
+              <button id="s-clear" class="danger-btn">清空</button>
+            </div>
+            <div class="row">
+              <span><b>退出 Clipora</b></span>
+              <button id="s-quit" class="ghost-btn">退出</button>
+            </div>
+          </div>
+          <p class="ver">Clipora 1.0 · 便携版</p>
+        </div>
+      </section>
+    </section>
+
+    <aside id="preview" class="glass" aria-label="预览">
+      <header class="pv-head">
+        <span id="pv-type" class="chip"></span>
+        <span id="pv-meta"></span>
+      </header>
+      <div id="pv-path" hidden></div>
+      <div id="pv-body"></div>
+      <footer class="pv-foot">
+        <button class="ghost-btn" id="pv-copy">仅复制 <kbd>Ctrl C</kbd></button>
+        <button class="primary-btn" id="pv-paste">粘贴 <kbd>⏎</kbd></button>
+      </footer>
+    </aside>
+  </div>
+
+  <div id="ctx" class="glass" hidden></div>
+  <div id="toast" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

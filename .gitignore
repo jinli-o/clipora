@@ -1,0 +1,15 @@
+# 编译输出
+src-tauri/target/
+src-tauri/gen/
+
+# 本地运行产生的数据（包含个人剪贴板历史，不要提交）
+data/
+发布/
+
+# 系统文件
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Release 压缩包（上传到 GitHub Releases，不提交）
+*.zip

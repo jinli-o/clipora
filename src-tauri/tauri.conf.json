@@ -3,7 +3,7 @@
   "productName": "Clipora",
   "version": "1.0.0",
   "identifier": "com.clipora.app",
-  "build": { "frontendDist": "../src" },
+  "build": { "frontendDist": "../ui" },
   "app": {
     "withGlobalTauri": true,
     "windows": [

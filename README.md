@@ -25,20 +25,23 @@ A lightweight, portable clipboard history manager for Windows.
 
 ## 下载安装
 
-1. 在 [Releases](../../releases) 下载最新的 `Clipora-v1.0.0.zip`
+1. 点本页上方绿色的 **Code** 按钮，选 **Download ZIP**
 2. 解压到任意文件夹
 3. 双击 `Clipora.exe`，程序会常驻在右下角托盘
+
+第一次运行时如果出现"Windows 已保护你的电脑"，点 **更多信息** → **仍要运行**。这是因为程序没有数字签名，不影响使用。
 
 系统要求：Windows 10 / 11（需要 WebView2，Windows 11 已自带）
 
 ## 文件说明
 
 ```
-Clipora\
-├─ Clipora.exe      主程序
+clipora\
+├─ Clipora.exe      主程序，双击运行
 ├─ ui\              界面文件，可用记事本修改，重启程序后生效
 ├─ data\            首次运行后自动生成，保存历史记录和设置
-└─ 使用说明.txt
+├─ 使用说明.txt
+└─ src-tauri\       程序源码，普通使用不需要
 ```
 
 所有数据都保存在 `data\` 文件夹里，整个文件夹拷走就能在别的电脑上继续用。
